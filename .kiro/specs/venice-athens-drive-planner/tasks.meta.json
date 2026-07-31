@@ -1,0 +1,227 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create `src/data/mock-itinerary.ts` with all types and data": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526115055
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526124809
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526365947
+      }
+    ],
+    "2.1 Create `src/components/RouteMap.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526115612
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526368902
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526926495
+      }
+    ],
+    "2.2 Create `src/components/MapPanel.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526115924
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526932602
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527078965
+      }
+    ],
+    "3.1 Create `src/components/TypingIndicator.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526116572
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526369752
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526927533
+      }
+    ],
+    "3.2 Create `src/components/EmberMessage.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526116812
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526370615
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526928253
+      }
+    ],
+    "3.3 Create `src/components/UserMessage.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526117077
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526371990
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526928721
+      }
+    ],
+    "3.4 Create `src/components/DecisionMessage.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526117446
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526933451
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527077137
+      }
+    ],
+    "3.5 Create `src/components/ChatPanel.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526117689
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526934259
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527079636
+      }
+    ],
+    "4.1 Create `src/components/AppHeader.tsx`": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526117959
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526372556
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526929333
+      }
+    ],
+    "5.1 Rewrite `src/App.tsx` with split-screen layout and all state": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526118296
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527088166
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527347227
+      }
+    ],
+    "6. Checkpoint — verify the app renders and interacts correctly": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526118633
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527357808
+      },
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527460711
+      }
+    ],
+    "1. Create the itinerary data file": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526366304
+      }
+    ],
+    "4. Build the header": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785526929691
+      }
+    ],
+    "2. Build the SVG route map": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527080097
+      }
+    ],
+    "3. Build the Ember chat components": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527080733
+      }
+    ],
+    "5. Wire everything together in App.tsx": [
+      {
+        "executionId": "2f3dc6a4-1099-4001-b991-8aa1c88fe6f1",
+        "chatSessionId": "sess_ca0b1151-e406-4135-867b-0a8c0fca6945",
+        "timestamp": 1785527352255
+      }
+    ]
+  }
+}

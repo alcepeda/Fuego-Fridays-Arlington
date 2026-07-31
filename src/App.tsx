@@ -1,227 +1,221 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { ArrowUpRight, Check, Copy } from "lucide-react";
+import { AppHeader } from "@/components/AppHeader";
+import { ChatPanel, type ChatMessage } from "@/components/ChatPanel";
+import { MapPanel } from "@/components/MapPanel";
+import {
+  CANNED_REPLIES,
+  EMBER_SEQUENCES,
+  ITINERARY,
+  ROUTE_DECISIONS,
+} from "@/data/mock-itinerary";
 
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Copy-and-paste starter prompts for Kiro's chat. */
-const PROMPTS = [
-  "What is humorphism? Show me a few patterns I could build.",
-  "What's already in this project that I can build with?",
-  "What do you already know about this workshop?",
-  "I do ___ at work. Suggest a humorphic pattern and build a first version.",
-  "Build the 'Just Need Your Input' pattern for ___.",
-  "Replace this landing page with a chat screen that uses the mock data.",
-];
+function makeId(): string {
+  return Math.random().toString(36).slice(2, 10);
+}
 
-/**
- * Fuego Fridays — starter landing / launch pad.
- *
- * This is intentionally NOT a demo of humorphism. When the app boots, the goal
- * of this screen is simple: confirm the environment works, show what's in the
- * box to build with, and push you into Kiro to start. Pick a pattern from
- * humorphism.com, pick your own work domain, and build it here.
- *
- * The shadcn/ui components (including the chat kit) live in src/components/ui
- * ready to import. Mock data is in src/data. Replace this screen with your build.
- */
+// ─── App ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const [currentDay, setCurrentDay] = useState(1);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isEmberTyping, setIsEmberTyping] = useState(false);
+  const [decidedDays, setDecidedDays] = useState<Set<number>>(new Set());
+  const [cannedReplyIndex, setCannedReplyIndex] = useState(0);
+
+  // Collect all timeout IDs so we can clear them on unmount
+  const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const schedule = useCallback((fn: () => void, delay: number) => {
+    const id = setTimeout(fn, delay);
+    timeoutRefs.current.push(id);
+    return id;
+  }, []);
+
+  const addEmberMessage = useCallback(
+    (text: string, extra?: Partial<ChatMessage>) => {
+      setMessages((prev) => [
+        ...prev,
+        { id: makeId(), role: "ember", text, ...extra },
+      ]);
+    },
+    [],
+  );
+
+  // ── Initial mount sequence ──────────────────────────────────────────────
+  useEffect(() => {
+    schedule(() => setIsEmberTyping(true), 1500);
+
+    schedule(() => {
+      setIsEmberTyping(false);
+      addEmberMessage(
+        "Hey! I'm Ember, your AI travel co-pilot. We've got 14 days and roughly 3,500 km ahead of us — Venice to Athens through six countries. I've mapped out the full route and I'll flag the big decisions as we go. Ready to roll? 🗺️",
+      );
+    }, 2300);
+
+    schedule(() => setIsEmberTyping(true), 3500);
+
+    schedule(() => {
+      setIsEmberTyping(false);
+      addEmberMessage(
+        "We're starting in Venice — no driving today, just soaking it in. Grand Canal gondola ride, Piazza San Marco at dusk, a cicchetti bar crawl through Cannaregio. I'll start flagging decisions when we hit Ljubljana on Day 3.",
+      );
+    }, 4300);
+
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      timeoutRefs.current.forEach(clearTimeout);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Day change ─────────────────────────────────────────────────────────
+  const handleDayChange = useCallback(
+    (day: number) => {
+      setCurrentDay(day);
+
+      const entry = ITINERARY[day - 1];
+      if (!entry.decisionRequired) return;
+      if (decidedDays.has(day)) return;
+
+      const decision = ROUTE_DECISIONS.find((d) => d.dayIndex === day - 1);
+      if (!decision) return;
+
+      schedule(() => setIsEmberTyping(true), 1200);
+
+      schedule(() => {
+        setIsEmberTyping(false);
+        addEmberMessage(decision.question, { decisionId: decision.id });
+      }, 2000);
+    },
+    [decidedDays, addEmberMessage, schedule],
+  );
+
+  // ── Stop click (delegate to handleDayChange) ───────────────────────────
+  const handleStopClick = useCallback(
+    (day: number) => {
+      handleDayChange(day);
+    },
+    [handleDayChange],
+  );
+
+  // ── Decision resolved ──────────────────────────────────────────────────
+  const handleDecide = useCallback(
+    (msgId: string, optionId: string) => {
+      // Find the decision message to get the decisionId
+      let decisionId: string | undefined;
+
+      setMessages((prev) =>
+        prev.map((m) => {
+          if (m.id !== msgId) return m;
+          decisionId = m.decisionId;
+          return { ...m, chosenOptionId: optionId };
+        }),
+      );
+
+      setDecidedDays((prev) => new Set(prev).add(currentDay));
+
+      // We need the decisionId synchronously — read it from state directly
+      // by searching messages (we captured it in the map above via closure)
+      // Find the decision to get the chosen option's label
+      setTimeout(() => {
+        // After state flush, find the decision
+        const decision = ROUTE_DECISIONS.find((d) => d.id === decisionId);
+        if (!decision) return;
+
+        const chosenOption = decision.options.find((o) => o.id === optionId);
+        if (!chosenOption) return;
+
+        // Add user message with chosen option label immediately
+        setMessages((prev) => [
+          ...prev,
+          { id: makeId(), role: "user", text: chosenOption.label },
+        ]);
+
+        // Queue Ember follow-up sequence
+        const sequenceKey = `${decision.id}|${optionId}`;
+        const followUps = EMBER_SEQUENCES[sequenceKey] ?? [];
+
+        followUps.forEach((followUp) => {
+          schedule(
+            () => {
+              setIsEmberTyping(false);
+              addEmberMessage(followUp.text);
+            },
+            800 + followUp.delayMs,
+          );
+        });
+
+        // Show typing indicator before the first follow-up
+        if (followUps.length > 0) {
+          schedule(() => setIsEmberTyping(true), 400);
+        }
+      }, 0);
+    },
+    [currentDay, addEmberMessage, schedule],
+  );
+
+  // ── Free-text send ─────────────────────────────────────────────────────
+  const handleSend = useCallback(
+    (text: string) => {
+      // Add user message immediately
+      setMessages((prev) => [
+        ...prev,
+        { id: makeId(), role: "user", text },
+      ]);
+
+      schedule(() => setIsEmberTyping(true), 1000);
+
+      schedule(() => {
+        setIsEmberTyping(false);
+        const reply = CANNED_REPLIES[cannedReplyIndex % CANNED_REPLIES.length];
+        addEmberMessage(reply);
+        setCannedReplyIndex((prev) => prev + 1);
+      }, 2000);
+    },
+    [cannedReplyIndex, addEmberMessage, schedule],
+  );
+
+  // ─── Layout ─────────────────────────────────────────────────────────────
+
+  const dayLabel = `Day ${currentDay} · ${ITINERARY[currentDay - 1].stop}, ${ITINERARY[currentDay - 1].country}`;
+
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
-      {/* Masthead — full-bleed, pinned to the window edges */}
-      <header className="border-b border-border/60">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-3 items-center px-6 py-5 sm:px-8">
-          <div className="flex items-center gap-3 justify-self-start">
-            <span className="font-display text-lg font-semibold tracking-tight sm:text-xl">
-              Fuego Fridays
-            </span>
-            <Badge
-              variant="outline"
-              className="rounded-full border-border text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
-            >
-              starter
-            </Badge>
-          </div>
-          <span className="hidden items-center gap-1.5 justify-self-center whitespace-nowrap rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground md:inline-flex">
-            <Check className="h-3.5 w-3.5 text-fuego-500" />
-            You&rsquo;re live &middot; localhost is running
-          </span>
-          <a
-            href="https://humorphism.com"
-            target="_blank"
-            rel="noreferrer"
-            className="justify-self-end text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-          >
-            humorphism.com
-          </a>
+    <div className="flex flex-col h-dvh bg-background">
+      <AppHeader dayLabel={dayLabel} />
+
+      {/* Body: map + chat */}
+      <div className="flex flex-1 min-h-0 flex-col md:flex-row">
+        {/* ── Mobile map strip (visible only below md) ── */}
+        <div className="md:hidden h-40 shrink-0 border-b border-border">
+          <MapPanel
+            currentDay={currentDay}
+            onDayChange={handleDayChange}
+            onStopClick={handleStopClick}
+          />
         </div>
-      </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 pb-24 sm:px-8">
-        {/* Hero — full-width rounded white panel */}
-        <section className="mt-8 w-full rounded-3xl border border-border/60 bg-card p-8 shadow-sm sm:mt-12 sm:p-12 lg:p-16">
-          <h1 className="max-w-4xl font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-            Build a front-end for an AI teammate.
-          </h1>
-
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-foreground sm:text-xl">
-            Pick one humorphic pattern. Build it into an experience that&rsquo;s
-            relevant to you, personally or at work.
-          </p>
-
-          <div className="mt-7 flex flex-wrap gap-3">
-            <a
-              href="https://humorphism.com/foundations/notice"
-              target="_blank"
-              rel="noreferrer"
-              className={cn(
-                "bg-thermal inline-flex items-center gap-1.5 rounded-md px-4 py-2.5",
-                "text-sm font-bold text-white shadow-sm",
-                "transition-all hover:-translate-y-0.5 hover:brightness-105",
-              )}
-            >
-              Browse humorphic patterns
-              <ArrowUpRight className="h-4 w-4" />
-            </a>
-            <span className="inline-flex items-center rounded-md border border-border px-4 py-2.5 text-sm text-muted-foreground">
-              The pattern is the constraint. The domain is yours.
-            </span>
-          </div>
-        </section>
-
-        {/* Start with Kiro — the page's one job: get you into the chat.
-            Horizontal padding matches the hero card so this content aligns
-            with the hero text above. */}
-        <section className="mt-20 px-8 sm:px-12 lg:px-16">
-          <SectionLabel>Start with Kiro</SectionLabel>
-          <p className="mt-4 text-lg leading-relaxed text-foreground sm:text-xl">
-            In your Kiro IDE, everything you need to start building is already
-            set up. This page, the localhost preview you&rsquo;re looking at now,
-            is what you&rsquo;ll change, and Kiro can help you do it. Open
-            Kiro&rsquo;s chat (<Kbd>⌘</Kbd>
-            <Kbd>L</Kbd> on Mac, <Kbd>Ctrl</Kbd>
-            <Kbd>L</Kbd> on Windows), tap a prompt to copy it, and paste it in.
-          </p>
-
-          <div className="mt-14">
-            <PromptGroup
-              label="Suggested prompts to get started"
-              prompts={PROMPTS}
-            />
-          </div>
-        </section>
-
-        {/* Vision tip */}
-        <section className="mt-10 px-8 sm:px-12 lg:px-16">
-          <div className="rounded-lg border border-fuego-500/25 bg-fuego-500/[0.05] p-5">
-            <p className="font-display text-lg font-semibold">
-              Show Kiro what you mean. Give it your eyes
-            </p>
-            <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-              Kiro&rsquo;s chat accepts images, so you can show it instead of
-              describing it. Paste or drag in a screenshot and say &ldquo;build
-              this.&rdquo; It works just as well for changes: screenshot what
-              Kiro builds on your localhost, point out what&rsquo;s off, and tell
-              it what to fix. A picture is faster than words for a UI.
-            </p>
-          </div>
-        </section>
-
-      </main>
-
-      {/* Footer — full-bleed, pinned to the bottom edge */}
-      <footer className="mt-16 border-t border-border/60">
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-xs text-muted-foreground sm:px-8">
-          <span>React 19 · TypeScript · Vite · Tailwind · shadcn/ui</span>
-          <span>No backend. Mock everything. The UX is the deliverable.</span>
+        {/* ── Desktop left panel: map (55%) ── */}
+        <div className="hidden md:flex md:w-[55%] flex-col border-r border-border">
+          <MapPanel
+            currentDay={currentDay}
+            onDayChange={handleDayChange}
+            onStopClick={handleStopClick}
+          />
         </div>
-      </footer>
+
+        {/* ── Right panel: chat (fills remaining space) ── */}
+        <div className="flex-1 flex flex-col min-h-0">
+          <ChatPanel
+            messages={messages}
+            isEmberTyping={isEmberTyping}
+            onSend={handleSend}
+            onDecide={handleDecide}
+          />
+        </div>
+      </div>
     </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-      {children}
-    </h2>
-  );
-}
-
-function PromptGroup({
-  label,
-  prompts,
-}: {
-  label: string;
-  prompts: string[];
-}) {
-  return (
-    <div>
-      <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        {label}
-      </h3>
-      <ul className="mt-3 divide-y divide-border border-y border-border">
-        {prompts.map((prompt) => (
-          <PromptRow key={prompt} text={prompt} />
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/** A single tappable prompt row that copies its text to the clipboard. */
-function PromptRow({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
-    } catch {
-      // Clipboard access can be blocked; fail quietly.
-    }
-  }
-
-  return (
-    <li>
-      <button
-        type="button"
-        onClick={handleCopy}
-        className="group flex w-full items-center justify-between gap-4 py-3.5 text-left"
-        aria-label={`Copy prompt: ${text}`}
-      >
-        <span className="text-lg leading-relaxed text-foreground sm:text-xl">
-          {text}
-        </span>
-        <span
-          className={cn(
-            "flex shrink-0 items-center gap-1.5 text-xs font-medium transition-colors",
-            copied
-              ? "text-fuego-600"
-              : "text-muted-foreground group-hover:text-foreground",
-          )}
-        >
-          {copied ? (
-            <Check className="h-3.5 w-3.5" />
-          ) : (
-            <Copy className="h-3.5 w-3.5" />
-          )}
-          {copied ? "Copied" : "Copy"}
-        </span>
-      </button>
-    </li>
-  );
-}
-
-function Kbd({ children }: { children: React.ReactNode }) {
-  return (
-    <kbd className="mx-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded border border-border bg-secondary px-1 font-sans text-[11px] font-medium text-muted-foreground">
-      {children}
-    </kbd>
   );
 }
